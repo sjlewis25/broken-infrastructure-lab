@@ -1,28 +1,14 @@
-# 🔥 Broken Infrastructure Lab
+## 💣 Broken Infrastructure Lab – AWS E-Commerce Simulation
 
-A purposefully flawed AWS-based e-commerce app to simulate real-world troubleshooting.
-
-## 😈 What's Broken?
-- Public S3 bucket
-- Over-permissive IAM roles (coming)
-- Misconfigured VPC (coming)
-- Unsecured EC2 with public IP
-- Missing monitoring, logging, backups
-
-## 💡 Your Mission
-1. Deploy this lab
-2. Identify vulnerabilities
-3. Fix them one by one
-4. Document each fix in GitHub issues or PRs
+This is a purpose-built, real-world troubleshooting lab to show off your skills in deploying, breaking, and fixing AWS infrastructure using Terraform.
 
 ---
 
-### 🛠 Tools
-- Terraform
-- AWS EC2, S3, VPC
-- Python (Flask)
-- Bash
+## 🔥 What’s Broken On Purpose
 
----
+- EC2 instance with a broken Flask app
+- Over-permissive IAM role (`*:*`)
+- Wide-open security group
+- No SSH access
+- S3 bucket (originally misconfigured)
 
-> Start breaking things. Then make it bulletproof.
