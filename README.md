@@ -1,64 +1,51 @@
-# 💣 Broken Infrastructure Lab – AWS E-Commerce Simulation
+# Broken Infrastructure Lab – AWS E-Commerce Simulation
 
-This is a purpose-built, real-world **troubleshooting lab** to showcase your ability to identify, diagnose, and fix broken cloud infrastructure. It simulates an insecure and unreliable e-commerce environment running on **AWS with Terraform**.
+This lab simulates an insecure and misconfigured e-commerce environment in AWS. It's designed to showcase your ability to identify, diagnose, and repair real-world infrastructure issues using Terraform.
 
----
+## Purpose
 
-## 🎯 What’s the Point?
+This isn't a copy-paste tutorial. It's a real troubleshooting lab that proves you can:
 
-Hiring managers want more than “I followed a tutorial.” This project is built to show that you can:
-- **Deploy real AWS resources with Terraform**
-- **Spot intentional misconfigurations and security flaws**
-- **Troubleshoot like a real Cloud/DevOps Engineer**
-- **Document issues and solutions like a pro**
+- Deploy live AWS infrastructure using Terraform
+- Spot critical misconfigurations and security flaws
+- Debug infrastructure like a Cloud or DevOps Engineer
+- Document and fix issues systematically
 
----
+## Broken on Purpose
 
-## 🧨 Broken Components (On Purpose)
+| Layer          | What's Broken                                | Why It Matters                                  |
+|----------------|----------------------------------------------|-------------------------------------------------|
+| EC2            | Flask app doesn't run                        | Simulates failed `user_data`                    |
+| Security Group | Wide-open access to all ports                | Mirrors real-world attack vectors               |
+| IAM Role       | Wildcard admin access (`*:*`)                | Shows poor permissions hygiene                  |
+| S3 Bucket      | Previously insecure name and deprecated ACLs | Demonstrates S3 security config awareness       |
+| SSH Access     | No key pair provisioned                      | Forces use of observability tools (CloudWatch)  |
 
-| Layer              | What's Broken                                 | Why It Matters                     |
-|-------------------|------------------------------------------------|------------------------------------|
-| EC2               | Flask app doesn't run properly                 | Simulates failed `user_data`       |
-| Security Group     | Wide-open access to all ports                 | Simulates real-world attack vector |
-| IAM Role          | Admin access to everything (`*:*`)             | Demonstrates overprivileged access |
-| S3 Bucket         | Now fixed: name was insecure, ACL deprecated  | Shows S3 configuration awareness   |
-| SSH Access        | No key pair; can't debug directly              | Shows value of observability tools |
+## Tech Stack
 
----
+- **AWS**: EC2, S3, VPC, IAM, Security Groups  
+- **IaC**: Terraform  
+- **Scripting**: Bash  
+- **App**: Python (Flask)  
+- **Debug Tools**: Optional CloudWatch + EC2 logs  
 
-## 🔧 Tech Stack
+## Architecture Overview
 
-- **AWS**: EC2, S3, VPC, IAM, Security Groups
-- **IaC**: Terraform
-- **Scripting**: Bash
-- **App**: Python (Flask)
-- **Debug Phase**: Optional CloudWatch + EC2 logs
+Terraform provisions:
+- A public VPC subnet
+- An EC2 instance running a broken Flask app
+- An isolated S3 bucket
+- An overly permissive IAM role
 
----
+## Fix & Investigate
 
-## 🧱 Infrastructure Architecture
+- Why isn’t the Flask app responding on port 5000?
+- How would you enable secure SSH access and install CloudWatch Agent?
+- Refactor the IAM role for least privilege — what’s the minimal policy needed?
+- Could ALB or Route 53 improve traffic control?
+- How would you modularize this with reusable Terraform modules?
 
-```
-Terraform → VPC → Public Subnet → EC2 Instance (Broken Flask App)
-                       ↓
-                S3 Bucket (isolated)
-                       ↓
-                IAM Role (full permissions 😬)
-```
-
----
-
-## 🚨 Things to Investigate & Fix
-
-- [ ] Why isn't the Flask app responding?
-- [ ] Can you get SSH access securely and install CloudWatch Agent?
-- [ ] How would you refactor the IAM role to least privilege?
-- [ ] How would you use ALB or Route53 for better traffic control?
-- [ ] Can you use Terraform modules to make this reusable?
-
----
-
-## 📂 Folder Structure
+## Folder Structure
 
 ```
 .
@@ -76,9 +63,7 @@ Terraform → VPC → Public Subnet → EC2 Instance (Broken Flask App)
 └── .gitignore
 ```
 
----
-
-## 🚀 How to Deploy
+## How to Deploy
 
 ```bash
 cd terraform
@@ -86,16 +71,14 @@ terraform init
 terraform apply -auto-approve
 ```
 
-Grab the public IP from Terraform outputs and try to access port 5000.
+Grab the public IP from the Terraform output and test port 5000.
 
 ---
 
-## 👨‍💻 Author
+### Author
 
 **Steven Lewis**  
 Cloud Engineer | AWS Certified | Terraform, DevOps, Security  
 GitHub: [sjlewis25](https://github.com/sjlewis25)
 
----
-
-> This lab breaks everything — so you can prove you know how to fix anything.
+> This lab intentionally breaks things—so you can prove you know how to fix them.
