@@ -1,84 +1,114 @@
-# Broken Infrastructure Lab – AWS E-Commerce Simulation
+# Broken Infrastructure Lab (AWS + Terraform)
 
-This lab simulates an insecure and misconfigured e-commerce environment in AWS. It's designed to showcase your ability to identify, diagnose, and repair real-world infrastructure issues using Terraform.
+## Overview
 
-## Purpose
+This project simulates inheriting broken cloud infrastructure—a scenario cloud engineers face all the time. The goal is to diagnose, document, and fix misconfigured AWS resources using Terraform, like a cloud forensic specialist.
 
-This isn't a copy-paste tutorial. It's a real troubleshooting lab that proves you can:
-
-- Deploy live AWS infrastructure using Terraform
-- Spot critical misconfigurations and security flaws
-- Debug infrastructure like a Cloud or DevOps Engineer
-- Document and fix issues systematically
-
-## Broken on Purpose
-
-| Layer          | What's Broken                                | Why It Matters                                  |
-|----------------|----------------------------------------------|-------------------------------------------------|
-| EC2            | Flask app doesn't run                        | Simulates failed `user_data`                    |
-| Security Group | Wide-open access to all ports                | Mirrors real-world attack vectors               |
-| IAM Role       | Wildcard admin access (`*:*`)                | Shows poor permissions hygiene                  |
-| S3 Bucket      | Previously insecure name and deprecated ACLs | Demonstrates S3 security config awareness       |
-| SSH Access     | No key pair provisioned                      | Forces use of observability tools (CloudWatch)  |
-
-## Tech Stack
-
-- **AWS**: EC2, S3, VPC, IAM, Security Groups  
-- **IaC**: Terraform  
-- **Scripting**: Bash  
-- **App**: Python (Flask)  
-- **Debug Tools**: Optional CloudWatch + EC2 logs  
-
-## Architecture Overview
-
-Terraform provisions:
-- A public VPC subnet
-- An EC2 instance running a broken Flask app
-- An isolated S3 bucket
-- An overly permissive IAM role
-
-## Fix & Investigate
-
-- Why isn’t the Flask app responding on port 5000?
-- How would you enable secure SSH access and install CloudWatch Agent?
-- Refactor the IAM role for least privilege — what’s the minimal policy needed?
-- Could ALB or Route 53 improve traffic control?
-- How would you modularize this with reusable Terraform modules?
-
-## Folder Structure
-
-```
-.
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   └── terraform.tfvars
-├── app/
-│   └── app.py
-│   └── requirements.txt
-├── scripts/
-│   └── debug.sh
-├── README.md
-└── .gitignore
-```
-
-## How to Deploy
-
-```bash
-cd terraform
-terraform init
-terraform apply -auto-approve
-```
-
-Grab the public IP from the Terraform output and test port 5000.
+It reflects a real-world challenge: joining a team mid-project and making sense of unclear, broken, or insecure environments.
 
 ---
 
-### Author
+## The Scenario: What Was Broken?
+
+I intentionally built an AWS stack with the following issues:
+
+- **Misconfigured security groups** (overly open ports)
+- **IAM role with over-permissive policies**
+- **EC2 instance not in a private subnet**
+- **RDS instance publicly accessible**
+- **Terraform state drift** (manual AWS console edits)
+- **No monitoring or logging enabled**
+
+These represent common, high-risk mistakes in early-stage cloud projects.
+
+---
+
+## My Approach
+
+1. **Cloned the repo** and reviewed the existing Terraform configuration
+2. **Compared state vs actual AWS environment** to identify drift
+3. **Used AWS CLI and Console tools** (VPC flow logs, CloudTrail, IAM Access Analyzer)
+4. **Diagnosed each misconfiguration** with specific security and performance risks
+5. **Refactored Terraform code** to:
+   - Lock down security groups
+   - Move EC2/RDS to private subnets
+   - Enforce IAM least privilege
+   - Enable CloudWatch logs and alarms
+6. **Applied fixes with Terraform**, verified infrastructure health
+
+---
+
+
+## Key AWS Services Used
+
+- **VPC, Subnets, Route Tables**
+- **EC2, RDS**
+- **IAM roles and policies**
+- **CloudWatch for monitoring**
+- **Terraform for infra as code**
+
+---
+
+## What I Fixed (Before → After)
+
+| Issue | Before | After |
+|------|--------|-------|
+| Security Groups | Open to 0.0.0.0/0 | Scoped to internal traffic only |
+| IAM Policy | AdministratorAccess | Custom role with least privilege |
+| EC2 | Public subnet | Moved to private subnet with NAT access |
+| RDS | Publicly accessible | Private, encrypted, subnet group applied |
+| Monitoring | Disabled | CloudWatch logs and alarms enabled |
+| Terraform Drift | Yes | State realigned with `terraform import` and cleanup |
+
+---
+
+## Lessons Learned
+
+- How to detect and reverse Terraform state drift
+- How small misconfigurations can introduce serious vulnerabilities
+- The value of IaC in maintaining consistent, secure environments
+- Real-world debugging skills beyond just “building from scratch”
+
+---
+
+## Future Enhancements
+
+- Add AWS Config and Inspector for continuous compliance
+- Add automated security scanning with Checkov or tfsec
+- Simulate more complex failure scenarios (e.g. broken CI/CD pipelines)
+
+---
+
+## How to Use This Lab
+
+1. Clone the repo:
+```bash
+git clone https://github.com/sjlewis25/broken-infra-lab.git
+cd broken-infra-lab
+```
+
+2. Review the `main.tf` and try to spot what’s broken
+
+3. Deploy the original setup (dev/test AWS account recommended):
+```bash
+terraform init
+terraform apply
+```
+
+4. Read the `FIX_REPORT.md` for step-by-step fixes
+
+5. Apply corrected infra:
+```bash
+cd fixed/
+terraform init
+terraform apply
+```
+
+---
+
+## Author
 
 **Steven Lewis**  
-Cloud Engineer | AWS Certified | Terraform, DevOps, Security  
-GitHub: [sjlewis25](https://github.com/sjlewis25)
+Cloud Engineer | AWS | Terraform | Infra Recovery & Security  
+[GitHub](https://github.com/sjlewis25)
 
-> This lab intentionally breaks things—so you can prove you know how to fix them.
